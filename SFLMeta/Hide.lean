@@ -20,7 +20,7 @@ block_extension Block.hide where
   data := Json.null
   traverse _ _ _ := pure none
   toHtml := some fun _ _ _ _ _ => pure .empty
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 @[directive]
 def hide : DirectiveExpanderOf Unit

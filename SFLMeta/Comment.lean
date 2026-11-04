@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 import SFLMeta.Bnf
 import SFLMeta.Variant
 import SFLMeta.Ignore
@@ -173,7 +174,21 @@ block_extension Block.devcomment (author : Option String)
         }}
       else
         pure .empty
-  toTeX := none
+  toTeX :=
+    open Verso.Output.TeX in
+    some fun _ goB _ data contents => do
+      let some (author, urgency, year) := decodeDevData? data
+        | pure .empty
+      if devNoteShown urgency then
+        let body : Verso.Output.TeX ← texBlocks goB contents
+        pure <| .seq #[
+          .raw "\\begin{tcolorbox}[colback=yellow!15,colframe=orange!80!black]\n",
+          .raw "\\textbf{", .text (devNoteLabel author urgency year), .raw "}\\par\n",
+          body,
+          .raw "\n\\end{tcolorbox}\n"
+        ]
+      else
+        pure .empty
   extraCss := [
 r##"
 div.sf-dev-note {

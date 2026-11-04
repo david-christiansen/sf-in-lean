@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 open Lean Elab
 open Verso ArgParse Doc Elab Genre.Manual
@@ -206,8 +207,7 @@ block_extension Block.displaymath where
   toTeX :=
     open Verso.Output.TeX in
     some fun _ goB _ _ contents => do
-      contents.foldlM (init := .empty) fun acc b =>
-        return acc ++ (← goB b)
+      texBlocks goB contents
   extraCss := [
 r##"
 .sf-displaymath {

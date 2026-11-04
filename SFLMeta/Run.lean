@@ -17,7 +17,7 @@ volume slug (`lf`/`hl`/`ts`); `mode` is
 which `extraContents` puts at the foot of every page and the saver repeats as a
 comment at the end of every generated `.lean` file. -/
 def mkConfig (vol mode stamp : String) : RenderConfig where
-  emitTeX := false
+  emitTeX := true
   emitHtmlSingle := .no
   emitHtmlMulti := .immediately
   htmlDepth := 2

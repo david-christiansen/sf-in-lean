@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 open Lean Elab
 open Verso ArgParse Doc Elab Genre.Manual
@@ -38,9 +39,8 @@ block_extension Block.epigraph where
   toTeX :=
     open Verso.Output.TeX in
     some fun _ goB _ _ contents => do
-      let body : Verso.Output.TeX ← contents.foldlM (init := .empty) fun acc b =>
-        return acc ++ (← goB b)
-      pure <| .seq #[.raw "\\textit{", body, .raw "}"]
+      let body : Verso.Output.TeX ← texBlocks goB contents
+      pure <| .seq #[.raw "\\begin{quote}\\itshape\n", body, .raw "\\end{quote}\n"]
   extraCss := [
 r##"
 div.sf-quote {

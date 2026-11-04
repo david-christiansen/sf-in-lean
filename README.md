@@ -30,8 +30,13 @@ To rebuild just one volume, use its make target and then serve `_out/`:
     python3 -m http.server 8000 -d _out/
 
 The HTML for a given volume and variant lands in
-`_out/<vol>/<variant>/html/`, one page per chapter.  (There is no
-per-chapter build target: a whole volume is the smallest unit.)
+`_out/<vol>/<variant>/html/`, one page per chapter, and the PDF in
+`_out/<vol>/<variant>/<vol>.pdf`.  (There is no per-chapter build
+target: a whole volume is the smallest unit.)
+
+Typesetting the PDF needs a TeX distribution with `lualatex` and
+`latexmk` (e.g. TeX Live or MacTeX).  To build only the HTML and Lean
+outputs, pass `PDF=no`, as in `make PDF=no lf`.
 
 The first build compiles the whole Lean toolchain's dependencies and
 takes a while; later builds are incremental.
@@ -45,9 +50,9 @@ written in [Verso](https://verso.lean-lang.org/) format.
 
 Running `make` at the top level produces, for each volume, four
 different ready-for-distribution outputs in a temporary top-level
-`_out` directory, each with both `.lean` and `.html` variants (in
-`_out/<vol>/<variant>/lean/` and `_out/<vol>/<variant>/html-multi/`
-respectively).
+`_out` directory, each with `.lean`, `.html`, and PDF variants (in
+`_out/<vol>/<variant>/lean/`, `_out/<vol>/<variant>/html/`, and
+`_out/<vol>/<variant>/<vol>.pdf` respectively).
 
 - **student**   (full prose, solutions elided)
 - **solutions** (full prose, solutions shown)

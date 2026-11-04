@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 import SFLMeta.Save
 
 open Lean Elab
@@ -22,7 +23,7 @@ block_extension Block.solution where
   toHtml :=
     some fun _ goB _ _ contents =>
       Verso.Output.Html.seq <$> contents.mapM goB
-  toTeX := none
+  toTeX := some fun _ goB _ _ contents => texBlocks goB contents
 
 @[directive]
 def solution : DirectiveExpanderOf Unit

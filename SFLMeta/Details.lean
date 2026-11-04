@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 open Lean Elab
 open Verso ArgParse Doc Elab Genre.Manual
@@ -73,12 +74,11 @@ block_extension Block.details (summary : String) where
         match data with
         | .str s => s
         | _ => ""
-      let body : Verso.Output.TeX ← contents.foldlM (init := .empty) fun acc b =>
-        return acc ++ (← goB b)
+      let body : Verso.Output.TeX ← texBlocks goB contents
       if summary.isEmpty then
         pure body
       else
-        pure <| .seq #[.raw s!"\\textit\{{summary}.} ", body]
+        pure <| .seq #[.raw "\\textit{", .text summary, .raw ".} ", body]
   extraCss := [
 r##"
 details.sf-details {

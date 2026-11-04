@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 import SFLCompat.Recall.Check
 import SFLCompat.Recall.Source
@@ -42,7 +43,7 @@ block_extension Block.recall (saved : Recall.Data) where
   data := toJson saved
   traverse _ _ _ := pure none
   toHtml := some fun _ goB _ _ contents => contents.mapM goB
-  toTeX := some fun _ goB _ _ contents => contents.mapM goB
+  toTeX := some fun _ goB _ _ contents => texBlocks goB contents
 
 /--
 Configuration shared by `recall` and `recallSource`: `+error` expects the

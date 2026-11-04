@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 open Lean Elab
 open Verso ArgParse Doc Elab Genre.Manual
@@ -14,7 +15,7 @@ block_extension Block.ignore where
   data := Json.null
   traverse _ _ _ := pure none
   toHtml := some fun _ goB _ _ contents => contents.mapM goB
-  toTeX  := some fun _ goB _ _ contents => contents.mapM goB
+  toTeX  := some fun _ goB _ _ contents => texBlocks goB contents
 
 /--
 A `:::ignore` directive: wrap content that should appear in the HTML book but not

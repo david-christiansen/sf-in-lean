@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 import SFLMeta.Variant
 
@@ -23,7 +24,7 @@ block_extension Block.terse where
   toHtml :=
     some fun _ goB _ _ contents =>
       Verso.Output.Html.seq <$> contents.mapM goB
-  toTeX := none
+  toTeX := some fun _ goB _ _ contents => texBlocks goB contents
 
 /-!
 `Block.full` wraps content that appears only in full (reading/HTML) builds.
@@ -40,7 +41,7 @@ block_extension Block.full where
   toHtml :=
     some fun _ goB _ _ contents =>
       Verso.Output.Html.seq <$> contents.mapM goB
-  toTeX := none
+  toTeX := some fun _ goB _ _ contents => texBlocks goB contents
 
 /-!
 `Block.suppressPreviousHeaderWhenTerse` marks the section heading immediately
@@ -66,7 +67,7 @@ block_extension Block.suppressPreviousHeaderWhenTerse where
     some fun _ _ _ _ _ =>
       pure (Verso.Output.Html.tag "div"
         #[("class", "suppress-previous-header-when-terse")] .empty)
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 @[directive]
 def terse : DirectiveExpanderOf Unit

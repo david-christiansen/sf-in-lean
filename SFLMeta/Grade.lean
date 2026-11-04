@@ -13,7 +13,7 @@ block_extension Block.grade where
   data := Json.null
   traverse _ _ _ := pure none
   toHtml := some fun _ _ _ _ _ => pure .empty
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 @[directive]
 def grade : DirectiveExpanderOf Unit
@@ -55,7 +55,7 @@ block_extension Block.gradeTheorem (points : String) (names : List Name) where
   data := Json.arr #[.str points, .arr <| (names.map (Json.str ∘ Name.toString)).toArray]
   traverse _ _ _ := pure none
   toHtml := some fun _ _ _ _ _ => pure .empty
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 @[directive]
 def gradeTheorem : DirectiveExpanderOf GradeTheoremConfig
@@ -78,7 +78,7 @@ block_extension Block.autogradedHole (names : List Name) where
   data := Json.arr #[.arr <| (names.map (Json.str ∘ Name.toString)).toArray]
   traverse _ _ _ := pure none
   toHtml := some fun _ _ _ _ _ => pure .empty
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 structure AutogradedHoleConfig where
   /-- The names of definitions to treat as holes. -/

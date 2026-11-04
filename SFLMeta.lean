@@ -17,6 +17,7 @@ import SFLMeta.Quiz
 import SFLMeta.Save
 import SFLMeta.SlideBreak
 import SFLMeta.Solution
+import SFLMeta.TeX
 import SFLMeta.Terse
 import SFLMeta.Theme
 import SFLMeta.Version

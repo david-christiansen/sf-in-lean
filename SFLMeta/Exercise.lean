@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 import SFLMeta.Variant
 
@@ -124,13 +125,12 @@ block_extension Block.exercise (exercise : ExerciseData) where
   toTeX :=
     open Verso.Output.TeX in
     some fun _ goB _ data contents => do
-      let body ← contents.foldlM (init := .empty) fun acc b =>
-        return acc ++ (← goB b)
+      let body ← texBlocks goB contents
       let .ok ({rating, name, level, optional, manual, ..} : ExerciseData) := fromJson? data
         | return body
       let desig := exerciseDesignation level optional manual
       pure <| .seq #[
-        .raw s!"\\paragraph\{Exercise ({rating} stars): {name}{desig}.}",
+        .raw "\\paragraph{", .text s!"Exercise ({rating} stars): {name}{desig}.", .raw "}",
         body
       ]
   extraCss := [

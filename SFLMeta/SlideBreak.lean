@@ -24,7 +24,7 @@ block_extension Block.slidebreak where
   toHtml :=
     some fun _ _ _ _ _ =>
       pure {{<div class="slide-break"></div>}}
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 @[directive]
 def slidebreak : DirectiveExpanderOf Unit

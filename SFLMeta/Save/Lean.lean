@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 import SubVerso.Highlighting
 
@@ -252,7 +253,7 @@ block_extension Block.leanSaved (saved : Save.LeanSaved.Data) where
       | return .empty
     unless saved.config.render do
       return .empty
-    contents.mapM goB
+    texBlocks goB contents
 
 
 /-! ## `lean` code-block override

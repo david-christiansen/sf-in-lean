@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 open Lean Elab
 open Verso ArgParse Doc Elab Genre.Manual
@@ -243,9 +244,9 @@ def toTextImpl (b : BNF) : String :=
 
 /-- Render a single token as a TeX fragment. -/
 def tokToTeX : BnfToken → Verso.Output.TeX
-  | .nonterm s => .raw s!"\\mathit\{{s}}"
-  | .meta    s => .raw s!"\\mathit\{{s}}"
-  | .lit     s => .raw s!"\\textsf\{{s}}"
+  | .nonterm s => .seq #[.raw "\\textit{", .text s, .raw "}"]
+  | .meta    s => .seq #[.raw "\\textit{", .text s, .raw "}"]
+  | .lit     s => .seq #[.raw "\\textsf{", .text s, .raw "}"]
 
 /-- Render an alternative as a TeX fragment, with `~` separators between tokens.  The
 gloss, if any, is rendered separately by `toTeXImpl` into its own column. -/
@@ -260,12 +261,12 @@ def toTeXImpl (b : BNF) : Verso.Output.TeX :=
   let rows : Array Verso.Output.TeX := b.productions.flatMap fun p =>
     p.alts.mapIdx fun i alt =>
       let lhsCell : Verso.Output.TeX :=
-        if i = 0 then .raw s!"\\mathit\{{p.lhs}}" else .empty
+        if i = 0 then .seq #[.raw "\\textit{", .text p.lhs, .raw "}"] else .empty
       let sep : Verso.Output.TeX :=
         if i = 0 then .raw "::=" else .raw "$\\mid$"
       let noteCell : Verso.Output.TeX :=
         match alt.note with
-        | some n => .raw s!"\\textit\{({n})}"
+        | some n => .seq #[.raw "\\textit{(", .text n, .raw ")}"]
         | none   => .empty
       .seq #[lhsCell, .raw " & ", sep, .raw " & ", altToTeX alt, .raw " & ", noteCell,
              .raw " \\\\\n"]

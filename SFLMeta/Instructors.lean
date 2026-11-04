@@ -19,7 +19,7 @@ block_extension Block.instructors where
   data := Json.null
   traverse _ _ _ := pure none
   toHtml := some fun _ _ _ _ _ => pure .empty
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 /-- A `:::instructors` directive is a noop for notes addressed to instructors.
 Unlike `:::dev` it takes no arguments: instructor notes speak for the book, not

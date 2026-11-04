@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 
 open Lean (Json quote)
 open Verso Doc Elab
@@ -28,7 +29,7 @@ block_extension Block.diagramWithAlt where
       contents.foldlM (init := (.empty : Verso.Output.TeX)) fun acc b => do
         match b with
         | .code _ => pure acc
-        | _ => return acc ++ (← goB b)
+        | _ => return acc ++ .seq #[← goB b, .paragraphBreak]
 
 /-! ## `:::diagramWithAlt` directive -/
 
@@ -60,7 +61,7 @@ block_extension Block.importBlock (source : String) where
   data := Json.str source
   traverse _ _ _ := pure none
   toHtml := some fun _ goB _ _ contents => contents.mapM goB
-  toTeX := some fun _ goB _ _ contents => contents.mapM goB
+  toTeX := some fun _ goB _ _ contents => texBlocks goB contents
 
 /-- An ` ```importBlock ` code block: cross-chapter `import` lines for the
 generated projects, rendered to the reader as a plain code block. The body is

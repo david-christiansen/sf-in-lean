@@ -1,10 +1,13 @@
 # Makefile for sf-in-lean
 #
 # Each volume is built in three symmetric variants:
-#   student    full prose, solutions elided   → _out/<vol>/student/{html,lean}
-#   solutions  full prose, solutions shown    → _out/<vol>/solutions/{html,lean}
-#   terse      lecture prose, solutions elided → _out/<vol>/terse/{html,lean}
-#   grading    full prose, solutions show (with grading attributes) → _out/<vol>/grading/{html,lean}
+#   student    full prose, solutions elided   → _out/<vol>/student/{html,lean,<vol>.pdf}
+#   solutions  full prose, solutions shown    → _out/<vol>/solutions/{html,lean,<vol>.pdf}
+#   terse      lecture prose, solutions elided → _out/<vol>/terse/{html,lean,<vol>.pdf}
+#   grading    full prose, solutions show (with grading attributes) → _out/<vol>/grading/{html,lean,<vol>.pdf}
+#
+# The PDF is typeset by `lualatex` (driven by `latexmk`) from the TeX that Verso
+# writes to _out/<vol>/<mode>/tex.  Pass PDF=no to skip it, e.g. `make PDF=no`.
 #
 # To add a new volume (e.g., plf), define its targets with:
 #   $(eval $(call VOLUME_template,plf))
@@ -27,18 +30,22 @@ define VOLUME_template
 $(1)-student: book-build
 	SFL_BUILD_STAMP="$$(BUILD_STAMP)" lake env .lake/build/bin/sfl-$(1) student
 	$$(call copy-devcontainer,_out/$(1)/student/lean)
+	$$(call build-pdf,_out/$(1)/student,$(1))
 
 $(1)-solutions: book-build
 	SFL_BUILD_STAMP="$$(BUILD_STAMP)" lake env .lake/build/bin/sfl-$(1) solutions
 	$$(call copy-devcontainer,_out/$(1)/solutions/lean)
+	$$(call build-pdf,_out/$(1)/solutions,$(1))
 
 $(1)-terse: book-build
 	SFL_BUILD_STAMP="$$(BUILD_STAMP)" lake env .lake/build/bin/sfl-$(1) terse
 	$$(call copy-devcontainer,_out/$(1)/terse/lean)
+	$$(call build-pdf,_out/$(1)/terse,$(1))
 
 $(1)-grading: book-build
 	SFL_BUILD_STAMP="$$(BUILD_STAMP)" lake env .lake/build/bin/sfl-$(1) grading
 	$$(call copy-devcontainer,_out/$(1)/grading/lean)
+	$$(call build-pdf,_out/$(1)/grading,$(1))
 
 $(1): $(1)-student $(1)-solutions $(1)-terse $(1)-grading
 
@@ -50,6 +57,15 @@ endef
 define copy-devcontainer
 	rm -rf $(1)/.devcontainer
 	cp -r .devcontainer $(1)/.devcontainer
+endef
+
+# Typeset the TeX in $(1)/tex and copy the result to $(1)/$(2).pdf.  Verso's
+# preamble uses fontspec, so the engine must be lualatex; -shell-escape lets
+# Verso's TeX convert SVG images with inkscape.
+PDF ?= yes
+define build-pdf
+	$(if $(filter yes,$(PDF)),cd $(1)/tex && latexmk -lualatex -shell-escape -interaction=nonstopmode -halt-on-error main.tex)
+	$(if $(filter yes,$(PDF)),cp $(1)/tex/main.pdf $(1)/$(2).pdf)
 endef
 
 # ── Volume definitions ────────────────────────────────────────────────────────

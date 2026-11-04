@@ -48,6 +48,14 @@ jobs:
           path: _out/*/*/lean/.lake/packages
           key: generated-packages-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
+      # `make all` typesets each variant's PDF with lualatex, using the LaTeX
+      # packages and fonts that Verso's TeX preamble requires.
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-luatex texlive-latex-extra texlive-fonts-extra fonts-dejavu
+
       # Regenerate the extracted `_out/<variant>/lean` projects and compile each
       # one. The `make` targets run the `lf_*` executables, which write the
       # extracted Lean sources and then `lake build` them; a compile failure in

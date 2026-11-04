@@ -1,4 +1,5 @@
 import VersoManual
+import SFLMeta.TeX
 import SFLMeta.Comment
 
 open Lean Elab
@@ -37,8 +38,7 @@ block_extension Block.quiz where
   toTeX :=
     open Verso.Output.TeX in
     some fun _ goB _ _ contents => do
-      let body : Verso.Output.TeX ← contents.foldlM (init := .empty) fun acc b =>
-        return acc ++ (← goB b)
+      let body : Verso.Output.TeX ← texBlocks goB contents
       pure <| .seq #[.raw "\\paragraph{Quiz.} ", body]
   extraCss := [
 r##"
@@ -75,7 +75,7 @@ block_extension Block.answer where
   data := Json.null
   traverse _ _ _ := pure none
   toHtml := some fun _ _ _ _ _ => pure .empty
-  toTeX := none
+  toTeX := some fun _ _ _ _ _ => pure .empty
 
 /-- A `:::answer` directive holds the answer to a quiz (the `-- HIDE` region
 inside a `-- QUIZ`).  A noop; superseded by `:::quizSolution`. -/
@@ -110,8 +110,7 @@ block_extension Block.quizSolution where
   toTeX :=
     open Verso.Output.TeX in
     some fun _ goB _ _ contents => do
-      let body : Verso.Output.TeX ← contents.foldlM (init := .empty) fun acc b =>
-        return acc ++ (← goB b)
+      let body : Verso.Output.TeX ← texBlocks goB contents
       pure <| .seq #[.raw "\\paragraph{Solution.} ", body]
   extraCss := [
 r##"
